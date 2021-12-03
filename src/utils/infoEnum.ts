@@ -1,7 +1,7 @@
 // 状态码
 export const enum Code {
   failCode = -1,
-  successCode = 0
+  successCode = 0,
 }
 
 // 返回信息
