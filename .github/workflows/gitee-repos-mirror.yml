@@ -19,10 +19,11 @@ jobs:
       - name: Mirror the Github organization repos to Gitee.
         uses: Yikun/hub-mirror-action@v1.0
         with:
-          src: github/pure-admin-backend
-          dst: gitee/pure-admin-backend
+          src: github/xiaoxian521
+          dst: gitee/yiming_chang
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
           account_type: org
           timeout: 600
           force_update: true
+          white_list: pure-admin-backend
