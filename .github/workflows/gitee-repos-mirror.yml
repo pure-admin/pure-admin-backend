@@ -23,7 +23,7 @@ jobs:
           dst: gitee/yiming_chang
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
-          account_type: org
+          account_type: user
           timeout: 600
           force_update: true
           white_list: pure-admin-backend
