@@ -1,33 +1,32 @@
 {
-  "name": "backend-ts",
-  "version": "1.0.0",
-  "description": "API接口",
-  "main": "index.js",
+  "name": "pure-admin-backend",
+  "version": "lastest",
+  "description": "pure-admin官方后端",
   "scripts": {
-    "build": "tsc",
-    "dev": "ts-node ./src/server.ts",
-    "start": "nodemon ./dist/server.js",
-    "prod": "npm run build && npm run start",
-    "yarn:clean": "yarn cache clean"
+    "start": "nodemon --config nodemon.json src/server.ts"
   },
   "author": "xiaoxian521",
   "license": "ISC",
-  "dependencies": {
-    "@types/express": "^4.17.9",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-swagger-generator": "^1.1.17",
-    "jsonwebtoken": "^8.5.1",
-    "mysql2": "^2.2.5",
-    "svg-captcha": "^1.4.0",
-    "winston": "^3.3.3"
-  },
   "devDependencies": {
-    "body-parser": "^1.19.0",
-    "nodemon": "^1.19.4",
-    "open": "^7.3.0",
-    "tslint": "^5.20.1",
-    "typescript": "^3.9.7"
+    "@types/express": "^4.17.14",
+    "@types/formidable": "^2.0.5",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^18.11.9",
+    "body-parser": "^1.20.1",
+    "dayjs": "^1.11.6",
+    "dotenv": "^16.0.3",
+    "esno": "^0.16.3",
+    "express": "^4.18.2",
+    "express-swagger-generator": "^1.1.17",
+    "formidable": "^2.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
+    "open": "^8.4.0",
+    "svg-captcha": "^1.4.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "winston": "^3.8.2"
   },
-  "repository": "git@github.com:xiaoxian521/vue-pure-admin.git"
+  "repository": "https://github.com/xiaoxian521/pure-admin-backend"
 }

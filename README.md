@@ -1,27 +1,34 @@
-# 接口
+<p align="center">
+pure-admin官方后端 
+<br />
+采用nodejs编写
+</p>
 
-## 安装依赖
+## 快速启动
+
+### 打开 `MySql`
+
+来到项目的 `src/config/index.ts` 文件，查看第 `50` 行，将 `mysql` 的账号密码跟您的 `mysql` 保持一致
+
+### 安装依赖
+
 ```
-yarn install
+pnpm install
 ```
 
-## 项目启动
+### 项目启动
+
+采用 [nodemon](https://github.com/remy/nodemon) 运行项目，修改代码自动更新，无需重启
+
 ```
-yarn dev
+pnpm start
 ```
 
-## Swagger文档访问地址
+### `Swagger` 文档访问地址
+
 http://localhost:3000
 
-## 在swagger中添加token验证
-① 先请求验证码接口，拿到验证码（info字段就是验证码）  
-② 然后请求登录接口，你可以在网页的Network中拿到登录成功后返回的token，复制  
-③ 最后回到swagger，点击右上角的绿色边框Authorize，你会看到一个Value的输入框，将复制的token前面加上Bearer 粘贴上去，点确定即可（Authorize）  
-（注意Bearer后面有一个空格哦）  
+## 如何在 `Swagger` 中添加 `token` 验证
 
-## 注意点
-请先全局安装typescript、ts-node，如安装请忽略
-```
-npm install -g typescript
-npm install -g ts-node
-```
+① 在注册接口注册个账号，然后去请求登录接口，请求成功之后看下面的返回值 `accessToken`，复制这个 `token`  
+② 回到 `Swagger`，点击右上角的绿色边框 `Authorize`，您会看到一个 `Value` 的输入框，将复制的 `token` 前面加上 `Bearer ` 粘贴上去，点确定即可，注意需要在 `Bearer` 后面加个一个空格

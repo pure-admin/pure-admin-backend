@@ -1,20 +1,22 @@
+import * as dayjs from "dayjs";
 import * as mysql from "mysql2";
 import secret from "../../config";
 import * as jwt from "jsonwebtoken";
 import { createHash } from "crypto";
 import Logger from "../../loaders/logger";
+import { Message } from "../../utils/enums";
 import { Request, Response } from "express";
-import { createMathExpr } from "svg-captcha";
+// import { createMathExpr } from "svg-captcha";
 import getFormatDate from "../../utils/date";
-import { Code, Info } from "../../utils/infoEnum";
 import { connection } from "../../utils/initMysql";
+// import { formidable } from "formidable";
+// let path = require("path");
 
-export interface dataModel {
-  length: number;
-}
+/** 保存验证码 */
+// let generateVerify: number;
 
-// 保存验证码
-let generateVerify: number;
+/** 过期时间 单位：毫秒 默认 1分钟过期，方便演示 */
+let expiresIn = 60000;
 
 /**
  * @typedef Error
@@ -26,11 +28,17 @@ let generateVerify: number;
  * @property {[integer]} code
  */
 
+// /**
+//  * @typedef Login
+//  * @property {string} username.required - 用户名 - eg: admin
+//  * @property {string} password.required - 密码 - eg: 123456
+//  * @property {integer} verify.required - 验证码
+//  */
+
 /**
  * @typedef Login
  * @property {string} username.required - 用户名 - eg: admin
  * @property {string} password.required - 密码 - eg: 123456
- * @property {integer} verify.required - 验证码
  */
 
 /**
@@ -48,18 +56,21 @@ let generateVerify: number;
  */
 
 const login = async (req: Request, res: Response) => {
-  const { username, password, verify } = req.body;
+  // const { username, password, verify } = req.body;
   // if (generateVerify !== verify) return res.json({
-  //   code: Code.failCode,
-  //   info: Info[0]
+  //   success: false,
+  // data: {
+  //   message: Message[0];
+  // }
   // })
+  const { username, password } = req.body;
   let sql: string =
     "select * from users where username=" + "'" + username + "'";
-  connection.query(sql, async function (err, data: dataModel) {
+  connection.query(sql, async function (err, data: any) {
     if (data.length == 0) {
       await res.json({
-        code: Code.failCode,
-        info: Info[1],
+        success: false,
+        data: { message: Message[1] },
       });
     } else {
       if (
@@ -70,30 +81,57 @@ const login = async (req: Request, res: Response) => {
             accountId: data[0].id,
           },
           secret.jwtSecret,
-          { expiresIn: 20000 }
+          { expiresIn }
         );
-        await res.json({
-          code: Code.successCode,
-          info: Info[2],
-          expires: 20000,
-          name: username,
-          accessToken,
-        });
+        if (username === "admin") {
+          await res.json({
+            success: true,
+            data: {
+              message: Message[2],
+              username,
+              // 这里模拟角色，根据自己需求修改
+              roles: ["admin"],
+              accessToken,
+              // 这里模拟刷新token，根据自己需求修改
+              refreshToken: "eyJhbGciOiJIUzUxMiJ9.adminRefresh",
+              expires: new Date(new Date()).getTime() + expiresIn,
+            },
+          });
+        } else {
+          await res.json({
+            success: true,
+            data: {
+              message: Message[2],
+              username,
+              // 这里模拟角色，根据自己需求修改
+              roles: ["common"],
+              accessToken,
+              // 这里模拟刷新token，根据自己需求修改
+              refreshToken: "eyJhbGciOiJIUzUxMiJ9.adminRefresh",
+              expires: new Date(new Date()).getTime() + expiresIn,
+            },
+          });
+        }
       } else {
         await res.json({
-          code: Code.failCode,
-          info: Info[3],
+          success: false,
+          data: { message: Message[3] },
         });
       }
     }
   });
 };
 
+// /**
+//  * @typedef Register
+//  * @property {string} username.required - 用户名
+//  * @property {string} password.required - 密码
+//  * @property {integer} verify.required - 验证码
+//  */
 /**
  * @typedef Register
- * @property {string} username.required - 用户名 - eg: admin
- * @property {string} password.required - 密码 - eg: 123456
- * @property {integer} verify.required - 验证码
+ * @property {string} username.required - 用户名
+ * @property {string} password.required - 密码
  */
 
 /**
@@ -111,24 +149,25 @@ const login = async (req: Request, res: Response) => {
  */
 
 const register = async (req: Request, res: Response) => {
-  const { username, password, verify } = req.body;
-  if (generateVerify !== verify)
-    return res.json({
-      code: Code.failCode,
-      info: Info[0],
-    });
+  // const { username, password, verify } = req.body;
+  const { username, password } = req.body;
+  // if (generateVerify !== verify)
+  //   return res.json({
+  //     success: false,
+  //     data: { message: Message[0] },
+  //   });
   if (password.length < 6)
     return res.json({
-      code: Code.failCode,
-      info: Info[4],
+      success: false,
+      data: { message: Message[4] },
     });
   let sql: string =
     "select * from users where username=" + "'" + username + "'";
-  connection.query(sql, async (err, data: dataModel) => {
+  connection.query(sql, async (err, data: any) => {
     if (data.length > 0) {
       await res.json({
-        code: Code.failCode,
-        info: Info[5],
+        success: false,
+        data: { message: Message[5] },
       });
     } else {
       let time = await getFormatDate();
@@ -151,8 +190,8 @@ const register = async (req: Request, res: Response) => {
           Logger.error(err);
         } else {
           await res.json({
-            code: Code.successCode,
-            info: Info[6],
+            success: true,
+            data: { message: Message[6] },
           });
         }
       });
@@ -181,7 +220,7 @@ const updateList = async (req: Request, res: Response) => {
   const { username } = req.body;
   let payload = null;
   try {
-    const authorizationHeader = req.get("Authorization");
+    const authorizationHeader = req.get("Authorization") as string;
     const accessToken = authorizationHeader.substr("Bearer ".length);
     payload = jwt.verify(accessToken, secret.jwtSecret);
   } catch (error) {
@@ -201,8 +240,8 @@ const updateList = async (req: Request, res: Response) => {
             Logger.error(err);
           } else {
             await res.json({
-              code: Code.successCode,
-              info: Info[7],
+              success: true,
+              data: { message: Message[7] },
             });
           }
         });
@@ -230,7 +269,7 @@ const deleteList = async (req: Request, res: Response) => {
   const { id } = req.params;
   let payload = null;
   try {
-    const authorizationHeader = req.get("Authorization");
+    const authorizationHeader = req.get("Authorization") as string;
     const accessToken = authorizationHeader.substr("Bearer ".length);
     payload = jwt.verify(accessToken, secret.jwtSecret);
   } catch (error) {
@@ -242,8 +281,8 @@ const deleteList = async (req: Request, res: Response) => {
       console.log(err);
     } else {
       await res.json({
-        code: Code.successCode,
-        info: Info[8],
+        success: true,
+        data: { message: Message[8] },
       });
     }
   });
@@ -273,7 +312,7 @@ const searchPage = async (req: Request, res: Response) => {
   const { page, size } = req.body;
   let payload = null;
   try {
-    const authorizationHeader = req.get("Authorization");
+    const authorizationHeader = req.get("Authorization") as string;
     const accessToken = authorizationHeader.substr("Bearer ".length);
     payload = jwt.verify(accessToken, secret.jwtSecret);
   } catch (error) {
@@ -286,8 +325,8 @@ const searchPage = async (req: Request, res: Response) => {
       Logger.error(err);
     } else {
       await res.json({
-        code: Code.successCode,
-        info: data,
+        success: true,
+        data,
       });
     }
   });
@@ -316,7 +355,7 @@ const searchVague = async (req: Request, res: Response) => {
   const { username } = req.body;
   let payload = null;
   try {
-    const authorizationHeader = req.get("Authorization");
+    const authorizationHeader = req.get("Authorization") as string;
     const accessToken = authorizationHeader.substr("Bearer ".length);
     payload = jwt.verify(accessToken, secret.jwtSecret);
   } catch (error) {
@@ -324,8 +363,8 @@ const searchVague = async (req: Request, res: Response) => {
   }
   if (username === "" || username === null)
     return res.json({
-      code: Code.failCode,
-      info: Info[9],
+      success: false,
+      data: { message: Message[9] },
     });
   let sql: string = "select * from users";
   sql += " WHERE username LIKE " + mysql.escape("%" + username + "%");
@@ -335,32 +374,34 @@ const searchVague = async (req: Request, res: Response) => {
         Logger.error(err);
       } else {
         await res.json({
-          code: Code.successCode,
-          info: data,
+          success: true,
+          data,
         });
       }
     });
   });
 };
 
-/**
- * @route GET /captcha
- * @summary 图形验证码
- * @group captcha - 图形验证码
- * @returns {object} 200
- * @security JWT
- */
+// const upload = async (req: Request, res: Response) => {};
 
-const captcha = async (req: Request, res: Response) => {
-  const create = createMathExpr({
-    mathMin: 1,
-    mathMax: 4,
-    mathOperator: "+",
-  });
-  generateVerify = Number(create.text);
-  res.type("svg"); // 响应的类型
-  res.json({ code: Code.successCode, info: create.text, svg: create.data });
-};
+// /**
+//  * @route GET /captcha
+//  * @summary 图形验证码
+//  * @group captcha - 图形验证码
+//  * @returns {object} 200
+//  * @security JWT
+//  */
+
+// const captcha = async (req: Request, res: Response) => {
+//   const create = createMathExpr({
+//     mathMin: 1,
+//     mathMax: 4,
+//     mathOperator: "+",
+//   });
+//   generateVerify = Number(create.text);
+//   res.type("svg"); // 响应的类型
+//   res.json({ success: true, data: { text: create.text, svg: create.data } });
+// };
 
 export {
   login,
@@ -369,5 +410,6 @@ export {
   deleteList,
   searchPage,
   searchVague,
-  captcha,
+  // upload,
+  // captcha,
 };

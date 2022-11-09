@@ -15,7 +15,7 @@ export default {
   options: {
     swaggerDefinition: {
       info: {
-        description: "Pure-Admin官方接口",
+        description: "pure-admin官方后端",
         title: "Swagger",
         version: require("../../package.json").version,
       },
@@ -34,10 +34,13 @@ export default {
     },
     route: {
       url: "./swagger-ui.html",
-      docs: "/swagger.json", //swagger文件 api
+      // swagger文件 api
+      docs: "/swagger.json",
     },
-    basedir: __dirname, //app absolute path
-    files: ["../router/api/*.ts"], //Path to the API handle folder
+    // app absolute path
+    basedir: __dirname,
+    // path to the API handle folder
+    files: ["../router/api/*.ts"],
   },
   logs: {
     level: process.env.LOG_LEVEL || "silly",

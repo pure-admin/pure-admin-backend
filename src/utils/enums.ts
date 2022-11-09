@@ -1,11 +1,5 @@
-// 状态码
-export const enum Code {
-  failCode = -1,
-  successCode = 0,
-}
-
-// 返回信息
-export enum Info {
+/** 返回信息 */
+export enum Message {
   "请输入正确的验证码",
   "账号尚未被注册",
   "登录成功",

@@ -1,5 +1,5 @@
 import app from "./app";
-import * as open from "open";
+// import * as open from "open";
 import config from "./config";
 import { user } from "./models/mysql";
 import Logger from "./loaders/logger";
@@ -16,7 +16,8 @@ import {
   deleteList,
   searchPage,
   searchVague,
-  captcha,
+  // upload,
+  // captcha,
 } from "./router/api/mysql";
 
 app.post("/login", (req, res) => {
@@ -43,9 +44,13 @@ app.post("/searchVague", (req, res) => {
   searchVague(req, res);
 });
 
-app.get("/captcha", (req, res) => {
-  captcha(req, res);
-});
+// app.post("/upload", (req, res) => {
+//   upload(req, res);
+// });
+
+// app.get("/captcha", (req, res) => {
+//   captcha(req, res);
+// });
 
 app
   .listen(config.port, () => {
