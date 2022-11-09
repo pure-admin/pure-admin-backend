@@ -31,14 +31,14 @@ let expiresIn = 60000;
 // /**
 //  * @typedef Login
 //  * @property {string} username.required - 用户名 - eg: admin
-//  * @property {string} password.required - 密码 - eg: 123456
+//  * @property {string} password.required - 密码 - eg: admin123
 //  * @property {integer} verify.required - 验证码
 //  */
 
 /**
  * @typedef Login
  * @property {string} username.required - 用户名 - eg: admin
- * @property {string} password.required - 密码 - eg: 123456
+ * @property {string} password.required - 密码 - eg: admin123
  */
 
 /**
@@ -95,6 +95,9 @@ const login = async (req: Request, res: Response) => {
               // 这里模拟刷新token，根据自己需求修改
               refreshToken: "eyJhbGciOiJIUzUxMiJ9.adminRefresh",
               expires: new Date(new Date()).getTime() + expiresIn,
+              // 这个标识是真实后端返回的接口，只是为了演示
+              pureAdminBackend:
+                "这个标识是pure-admin-backend真实后端返回的接口，只是为了演示",
             },
           });
         } else {
@@ -109,6 +112,9 @@ const login = async (req: Request, res: Response) => {
               // 这里模拟刷新token，根据自己需求修改
               refreshToken: "eyJhbGciOiJIUzUxMiJ9.adminRefresh",
               expires: new Date(new Date()).getTime() + expiresIn,
+              // 这个标识是真实后端返回的接口，只是为了演示
+              pureAdminBackend:
+                "这个标识是pure-admin-backend真实后端返回的接口，只是为了演示",
             },
           });
         }
