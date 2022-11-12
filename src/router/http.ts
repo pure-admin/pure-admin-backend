@@ -1,14 +1,13 @@
-import * as dayjs from "dayjs";
 import * as mysql from "mysql2";
-import secret from "../../config";
+import secret from "../config";
 import * as jwt from "jsonwebtoken";
 import { createHash } from "crypto";
-import Logger from "../../loaders/logger";
-import { Message } from "../../utils/enums";
+import Logger from "../loaders/logger";
+import { Message } from "../utils/enums";
 import { Request, Response } from "express";
 // import { createMathExpr } from "svg-captcha";
-import getFormatDate from "../../utils/date";
-import { connection } from "../../utils/initMysql";
+import getFormatDate from "../utils/date";
+import { connection } from "../utils/mysql";
 // import { formidable } from "formidable";
 // let path = require("path");
 

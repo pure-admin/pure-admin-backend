@@ -1,9 +1,10 @@
 import app from "./app";
 // import * as open from "open";
 import config from "./config";
+import * as dayjs from "dayjs";
 import { user } from "./models/mysql";
 import Logger from "./loaders/logger";
-import { queryTable } from "./utils/initMysql";
+import { queryTable } from "./utils/mysql";
 const expressSwagger = require("express-swagger-generator")(app);
 expressSwagger(config.options);
 
@@ -18,7 +19,7 @@ import {
   searchVague,
   // upload,
   // captcha,
-} from "./router/api/mysql";
+} from "./router/http";
 
 app.post("/login", (req, res) => {
   login(req, res);
@@ -51,6 +52,30 @@ app.post("/searchVague", (req, res) => {
 // app.get("/captcha", (req, res) => {
 //   captcha(req, res);
 // });
+
+app.ws("/socket", function (ws, req) {
+  ws.send(
+    `${dayjs(new Date()).format("YYYY年MM月DD日HH时mm分ss秒")}成功连接socket`
+  );
+
+  // 监听客户端是否关闭socket
+  ws.on("close", function (msg) {
+    console.log("客户端已关闭socket", msg);
+    ws.close();
+  });
+
+  // 监听客户端发送的消息
+  ws.on("message", function (msg) {
+    // 如果客户端发送close，服务端主动关闭该socket
+    if (msg === "close") ws.close();
+
+    ws.send(
+      `${dayjs(new Date()).format(
+        "YYYY年MM月DD日HH时mm分ss秒"
+      )}接收到客户端发送的信息，服务端返回信息：${msg}`
+    );
+  });
+});
 
 app
   .listen(config.port, () => {

@@ -1,4 +1,5 @@
 import * as express from "express";
+import * as expressWs from "express-ws";
 import * as bodyParser from "body-parser";
 
 class App {
@@ -8,6 +9,8 @@ class App {
     this.config();
   }
   private config(): void {
+    // 支持websocket
+    expressWs(this.app);
     // 支持json编码的主体
     this.app.use(bodyParser.json());
     // 支持编码的主体
