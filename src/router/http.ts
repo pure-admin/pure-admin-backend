@@ -387,15 +387,7 @@ const searchVague = async (req: Request, res: Response) => {
   });
 };
 
-// /**
-//  * @route POST /upload
-//  * @produces application/x-www-form-urlencoded
-//  * @consumes application/x-www-form-urlencoded
-//  * @summary 文件上传
-//  * @group upload - 文件上传
-//  * @returns {object} 200
-//  */
-
+// express-swagger-generator中没有文件上传文档写法，所以请使用postman调试
 const upload = async (req: Request, res: Response) => {
   // 文件存放地址
   var des_file = "./public/images/" + req.files[0].originalname;
