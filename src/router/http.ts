@@ -1,18 +1,18 @@
-import * as mysql from "mysql2";
+import * as fs from "fs";
 import secret from "../config";
+import * as mysql from "mysql2";
 import * as jwt from "jsonwebtoken";
 import { createHash } from "crypto";
 import Logger from "../loaders/logger";
 import { Message } from "../utils/enums";
-import { Request, Response } from "express";
-// import { createMathExpr } from "svg-captcha";
 import getFormatDate from "../utils/date";
 import { connection } from "../utils/mysql";
-// import { formidable } from "formidable";
-// let path = require("path");
+import { Request, Response } from "express";
+import { createMathExpr } from "svg-captcha";
+const utils = require("@pureadmin/utils");
 
 /** 保存验证码 */
-// let generateVerify: number;
+let generateVerify: number;
 
 /** 过期时间 单位：毫秒 默认 1分钟过期，方便演示 */
 let expiresIn = 60000;
@@ -387,26 +387,56 @@ const searchVague = async (req: Request, res: Response) => {
   });
 };
 
-// const upload = async (req: Request, res: Response) => {};
-
 // /**
-//  * @route GET /captcha
-//  * @summary 图形验证码
-//  * @group captcha - 图形验证码
+//  * @route POST /upload
+//  * @produces application/x-www-form-urlencoded
+//  * @consumes application/x-www-form-urlencoded
+//  * @summary 文件上传
+//  * @group upload - 文件上传
 //  * @returns {object} 200
-//  * @security JWT
 //  */
 
-// const captcha = async (req: Request, res: Response) => {
-//   const create = createMathExpr({
-//     mathMin: 1,
-//     mathMax: 4,
-//     mathOperator: "+",
-//   });
-//   generateVerify = Number(create.text);
-//   res.type("svg"); // 响应的类型
-//   res.json({ success: true, data: { text: create.text, svg: create.data } });
-// };
+const upload = async (req: Request, res: Response) => {
+  // 文件存放地址
+  var des_file = "./public/images/" + req.files[0].originalname;
+  fs.readFile(req.files[0].path, function (err, data) {
+    fs.writeFile(des_file, data, function (err) {
+      if (err) {
+        res.json({
+          success: false,
+          data: { message: Message[10] },
+        });
+      } else {
+        res.json({
+          success: true,
+          data: {
+            message: Message[11],
+            filename: req.files[0].originalname,
+            filepath: utils.getAbsolutePath(des_file),
+          },
+        });
+      }
+    });
+  });
+};
+
+/**
+ * @route GET /captcha
+ * @summary 图形验证码
+ * @group captcha - 图形验证码
+ * @returns {object} 200
+ */
+
+const captcha = async (req: Request, res: Response) => {
+  const create = createMathExpr({
+    mathMin: 1,
+    mathMax: 4,
+    mathOperator: "+",
+  });
+  generateVerify = Number(create.text);
+  res.type("svg"); // 响应的类型
+  res.json({ success: true, data: { text: create.text, svg: create.data } });
+};
 
 export {
   login,
@@ -415,6 +445,6 @@ export {
   deleteList,
   searchPage,
   searchVague,
-  // upload,
-  // captcha,
+  upload,
+  captcha,
 };

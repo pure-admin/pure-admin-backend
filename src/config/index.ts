@@ -40,7 +40,7 @@ export default {
     // app absolute path
     basedir: __dirname,
     // path to the API handle folder
-    files: ["../router/api/*.ts"],
+    files: ["../router/*.ts"],
   },
   logs: {
     level: process.env.LOG_LEVEL || "silly",

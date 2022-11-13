@@ -82,3 +82,5 @@ dist
 docs
 
 .DS_Store
+upload_tmp
+public/images/

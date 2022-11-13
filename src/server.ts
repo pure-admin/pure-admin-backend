@@ -2,6 +2,7 @@ import app from "./app";
 // import * as open from "open";
 import config from "./config";
 import * as dayjs from "dayjs";
+import * as multer from "multer";
 import { user } from "./models/mysql";
 import Logger from "./loaders/logger";
 import { queryTable } from "./utils/mysql";
@@ -17,8 +18,8 @@ import {
   deleteList,
   searchPage,
   searchVague,
-  // upload,
-  // captcha,
+  upload,
+  captcha,
 } from "./router/http";
 
 app.post("/login", (req, res) => {
@@ -45,13 +46,15 @@ app.post("/searchVague", (req, res) => {
   searchVague(req, res);
 });
 
-// app.post("/upload", (req, res) => {
-//   upload(req, res);
-// });
+// 新建存放临时文件的文件夹
+const upload_tmp = multer({ dest: "upload_tmp/" });
+app.post("/upload", upload_tmp.any(), (req, res) => {
+  upload(req, res);
+});
 
-// app.get("/captcha", (req, res) => {
-//   captcha(req, res);
-// });
+app.get("/captcha", (req, res) => {
+  captcha(req, res);
+});
 
 app.ws("/socket", function (ws, req) {
   ws.send(
