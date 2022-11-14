@@ -9,6 +9,7 @@ import getFormatDate from "../utils/date";
 import { connection } from "../utils/mysql";
 import { Request, Response } from "express";
 import { createMathExpr } from "svg-captcha";
+
 const utils = require("@pureadmin/utils");
 
 /** 保存验证码 */
@@ -390,26 +391,53 @@ const searchVague = async (req: Request, res: Response) => {
 // express-swagger-generator中没有文件上传文档写法，所以请使用postman调试
 const upload = async (req: Request, res: Response) => {
   // 文件存放地址
-  var des_file = "./public/images/" + req.files[0].originalname;
-  fs.readFile(req.files[0].path, function (err, data) {
-    fs.writeFile(des_file, data, function (err) {
-      if (err) {
-        res.json({
-          success: false,
-          data: { message: Message[10] },
+  const des_file: any = (index: number) =>
+    "./public/files/" + req.files[index].originalname;
+  let filesLength = req.files.length as number;
+  let result = [];
+
+  function asyncUpload() {
+    return new Promise((resolve, rejects) => {
+      (req.files as Array<any>).forEach((ev, index) => {
+        fs.readFile(req.files[index].path, function (err, data) {
+          fs.writeFile(des_file(index), data, function (err) {
+            if (err) {
+              rejects(err);
+            } else {
+              while (filesLength > 0) {
+                result.push({
+                  filename: req.files[filesLength - 1].originalname,
+                  filepath: utils.getAbsolutePath(des_file(filesLength - 1)),
+                });
+                filesLength--;
+              }
+              if (filesLength === 0) resolve(result);
+            }
+          });
         });
-      } else {
-        res.json({
-          success: true,
-          data: {
-            message: Message[11],
-            filename: req.files[0].originalname,
-            filepath: utils.getAbsolutePath(des_file),
-          },
-        });
-      }
+      });
     });
-  });
+  }
+
+  asyncUpload()
+    .then((fileList) => {
+      res.json({
+        success: true,
+        data: {
+          message: Message[11],
+          fileList,
+        },
+      });
+    })
+    .catch(() => {
+      res.json({
+        success: false,
+        data: {
+          message: Message[10],
+          fileList: [],
+        },
+      });
+    });
 };
 
 /**
